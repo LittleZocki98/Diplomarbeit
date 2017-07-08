@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Diplomarbeit {
+﻿namespace Diplomarbeit {
   class Vector3D {
     private double x, y, z;
 
