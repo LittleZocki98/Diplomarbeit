@@ -20,6 +20,10 @@ namespace Diplomarbeit {
     }
 
     public HexaLeg(Vector3D Offset, Vector3D Thigh, Vector3D Shank) {
+      this.offset = Offset;
+      this.thigh = Thigh;
+      this.shank = Shank;
+
       this.alpha = 0.0;
       this.beta = 0.0;
       this.gamma = 0.0;
