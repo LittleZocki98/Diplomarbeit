@@ -1,5 +1,8 @@
 ﻿namespace Diplomarbeit {
   class Vector3D {
+    /// <summary>
+    ///   X, Y, Z -> vector dimensions
+    /// </summary>
     private double x, y, z;
 
     public double X {
