@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using System.IO.Ports;
 
 namespace Diplomarbeit {
@@ -19,6 +15,7 @@ namespace Diplomarbeit {
     public List<string> GetPorts() {
       List<string> possiblePorts = new List<string>();
       possiblePorts.AddRange(SerialPort.GetPortNames());
+      possiblePorts.Sort();
       return possiblePorts;
     }
 
@@ -34,7 +31,7 @@ namespace Diplomarbeit {
       try {
         port = new SerialPort(portName, boudRate, parity, dataBits, stopBits);
         port.Open();
-      } catch(Exception e) {
+      }catch(Exception e) {
         // TO DO
       }
     }
@@ -52,7 +49,7 @@ namespace Diplomarbeit {
     }
 
     /// <summary>
-    /// 
+    ///   Send a byte buffers
     /// </summary>
     /// <param name="buffer">The byte array that contains the data to write to the port</param>
     /// <param name="offset">The zero-based byte offset in the <paramref name="buffer"/> parameter at which to begin copying bytes to the port</param>
