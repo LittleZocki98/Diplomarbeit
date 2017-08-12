@@ -45,9 +45,7 @@ namespace Diplomarbeit {
 
       this.point = new Vector3D(0, 0, 0);
 
-      this.alpha = 0.0;
-      this.beta = 0.0;
-      this.gamma = 0.0;
+      CalculateAngles(this.point);
     }
 
     /// <summary>
@@ -60,10 +58,11 @@ namespace Diplomarbeit {
       double a = Math.Sqrt(Point.X * Point.X + Point.Y * Point.Y);
       double b = (Point.Z - this.offset.Z) * (Point.Z - this.offset.Z);
       double c = (a - this.offset.X) * (a - this.offset.X);
+      double d = b + c;
 
       this.alpha = Math.Atan2(Point.Y, Point.X) - Math.Asin((this.offset.Y + this.thigh.Y) / a);
-      this.gamma = Math.Acos(((b + c) - (this.thigh.Z * this.thigh.Z) - (this.shank.Z * this.shank.Z)) / (2.0 * this.thigh.Z * this.shank.Z));
-      this.beta = (Math.PI / 2.0) - (Math.Atan2(Point.Z - this.offset.Z, a - this.offset.X) + Math.Asin(Math.Sin(gamma) * (this.shank.Z / Math.Sqrt(b + c))));
+      this.gamma = Math.Acos((d - (this.thigh.Z * this.thigh.Z) - (this.shank.Z * this.shank.Z)) / (2.0 * this.thigh.Z * this.shank.Z));
+      this.beta = (Math.PI / 2.0) - (Math.Atan2(Point.Z - this.offset.Z, a - this.offset.X) + Math.Asin(Math.Sin(gamma) * (this.shank.Z / Math.Sqrt(d))));
     }
   }
 }
