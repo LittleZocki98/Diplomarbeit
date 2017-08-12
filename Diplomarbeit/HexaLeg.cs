@@ -57,8 +57,8 @@ namespace Diplomarbeit {
 
       double a = Math.Sqrt(Point.X * Point.X + Point.Y * Point.Y);
       double b = (Point.Z - this.offset.Z) * (Point.Z - this.offset.Z);
-      double c = (a - this.offset.X) * (a - this.offset.X);
-      double d = b + c;
+      double c = a - this.offset.X;
+      double d = b + (c * c);
 
       this.alpha = Math.Atan2(Point.Y, Point.X) - Math.Asin((this.offset.Y + this.thigh.Y) / a);
       this.gamma = Math.Acos((d - (this.thigh.Z * this.thigh.Z) - (this.shank.Z * this.shank.Z)) / (2.0 * this.thigh.Z * this.shank.Z));
