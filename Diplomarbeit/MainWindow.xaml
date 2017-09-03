@@ -6,17 +6,35 @@
         xmlns:local="clr-namespace:Diplomarbeit"
         mc:Ignorable="d"
         Title="HexaPod" Height="350" Width="525" Icon="Resources/Icon.png">
+  <Window.CommandBindings>
+    <CommandBinding Command="{x:Static local:CustomCommands.Exit}" Executed="ExitCommand_Executed" CanExecute="ExitCommand_CanExecute"/>
+    <CommandBinding Command="{x:Static local:CustomCommands.AddDevice}" Executed="AddDevice_Executed" CanExecute="AddDevice_CanExecute"/>
+  </Window.CommandBindings>
+  
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition Height="5"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition/>
-      <RowDefinition Height="5"/>
+      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="5"/>
       <ColumnDefinition/>
       <ColumnDefinition Width="5"/>
     </Grid.ColumnDefinitions>
-
+    
+    <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+      <MenuItem Header="App">
+        <MenuItem Command="{x:Static local:CustomCommands.Exit}"/>
+      </MenuItem>
+      <MenuItem Header="Device">
+        <MenuItem Command="{x:Static local:CustomCommands.AddDevice}"/>
+      </MenuItem>
+    </Menu>
+    
+    <StatusBar Grid.Column="3">
+      
+    </StatusBar>
   </Grid>
 </Window>

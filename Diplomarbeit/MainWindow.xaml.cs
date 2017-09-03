@@ -21,5 +21,20 @@ namespace Diplomarbeit {
     public MainWindow() {
       InitializeComponent();
     }
+
+
+    private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+      e.CanExecute = true;
+    }
+    private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e) {
+      Application.Current.Shutdown();
+    }
+
+    private void AddDevice_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+      e.CanExecute = true;
+    }
+    private void AddDevice_Executed(object sender, ExecutedRoutedEventArgs e) {
+      MessageBox.Show("Adding new Device");
+    }
   }
 }

@@ -1,5 +1,10 @@
-﻿using System;
+﻿/***********************************************
+ *  Class for easy port handling
+ ***********************************************/
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 
 namespace Diplomarbeit {
@@ -17,6 +22,24 @@ namespace Diplomarbeit {
       possiblePorts.AddRange(SerialPort.GetPortNames());
       possiblePorts.Sort();
       return possiblePorts;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void AddDevice() {
+      try {
+        Process p = Process.Start("C:\\Windows\\System32\\DevicePairingWizard.exe");
+        while(true) {
+          if(p.HasExited) {
+            break;
+          }
+        }
+
+
+      } catch(Exception e) {
+
+      }
     }
 
     /// <summary>
