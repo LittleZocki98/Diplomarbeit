@@ -18,8 +18,12 @@ namespace Diplomarbeit {
   /// Interaktionslogik für MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window {
+
+    private Connection connection;
+
     public MainWindow() {
       InitializeComponent();
+      this.connection = new Connection();
     }
 
 
@@ -34,7 +38,7 @@ namespace Diplomarbeit {
       e.CanExecute = true;
     }
     private void AddDevice_Executed(object sender, ExecutedRoutedEventArgs e) {
-      MessageBox.Show("Adding new Device");
+      this.connection.AddDevice();
     }
   }
 }
