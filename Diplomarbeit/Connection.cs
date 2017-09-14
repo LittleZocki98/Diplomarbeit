@@ -43,6 +43,17 @@ namespace Diplomarbeit {
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    public void RemoveDevice() {
+      try {
+
+      } catch(Exception e) {
+
+      }
+    }
+
+    /// <summary>
     ///   Initializes the port
     /// </summary>
     /// <param name="portName">Name of the port (COM#)</param>

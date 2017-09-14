@@ -27,6 +27,8 @@ namespace Diplomarbeit {
     }
 
 
+    // CustomMenu Command-Stuffz
+    // # Exit
     private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
       e.CanExecute = true;
     }
@@ -34,11 +36,20 @@ namespace Diplomarbeit {
       Application.Current.Shutdown();
     }
 
+    // # Add Device
     private void AddDevice_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
       e.CanExecute = true;
     }
     private void AddDevice_Executed(object sender, ExecutedRoutedEventArgs e) {
       this.connection.AddDevice();
+    }
+
+    // # Remove Device
+    private void RemoveDevice_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+      e.CanExecute = true;
+    }
+    private void RemoveDevice_Executed(object sender, ExecutedRoutedEventArgs e) {
+      this.connection.RemoveDevice();
     }
   }
 }

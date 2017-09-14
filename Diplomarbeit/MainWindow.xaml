@@ -9,6 +9,7 @@
   <Window.CommandBindings>
     <CommandBinding Command="{x:Static local:CustomCommands.Exit}" Executed="ExitCommand_Executed" CanExecute="ExitCommand_CanExecute"/>
     <CommandBinding Command="{x:Static local:CustomCommands.AddDevice}" Executed="AddDevice_Executed" CanExecute="AddDevice_CanExecute"/>
+    <CommandBinding Command="{x:Static local:CustomCommands.RemoveDevice}" Executed="RemoveDevice_Executed" CanExecute="RemoveDevice_CanExecute"/>
   </Window.CommandBindings>
   
   <Grid>
@@ -30,6 +31,7 @@
       </MenuItem>
       <MenuItem Header="Device">
         <MenuItem Command="{x:Static local:CustomCommands.AddDevice}"/>
+        <MenuItem Command="{x:Static local:CustomCommands.RemoveDevice}"/>
       </MenuItem>
     </Menu>
     
