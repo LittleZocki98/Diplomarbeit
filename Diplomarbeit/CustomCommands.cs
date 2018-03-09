@@ -19,6 +19,7 @@ namespace Diplomarbeit {
         new KeyGesture(Key.A, ModifierKeys.Control)
       }
     );
+
     public static readonly RoutedUICommand RemoveDevice = new RoutedUICommand("Remove Device", "Remove Device", typeof(CustomCommands),
       new InputGestureCollection() {
         new KeyGesture(Key.D, ModifierKeys.Control)
