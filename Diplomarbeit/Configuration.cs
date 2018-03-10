@@ -5,18 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
+using Diplomarbeit.Hexaleg;
 using Diplomarbeit.Hexeptions;
 using Diplomarbeit.Vector;
 
 namespace Diplomarbeit.Configuration {
   
   class Config {
-    private class temp {
+    private class tempLeg {
       public double Lambda { get; set; }
       public SimpleVector Offset { get; set; }
       public SimpleVector Hip { get; set; }
       public SimpleVector Thigh { get; set; }
       public SimpleVector Shank { get; set; }
+      public Boundary Support { get; set; }
+      public Boundary Switch { get; set; }
+    }
+    private class configFile {
+      public List<tempLeg> Legs { get; set; }
     }
 
     private string filePath;
@@ -31,32 +37,36 @@ namespace Diplomarbeit.Configuration {
       }
     }
 
-    public List<Hexaleg.HexaLeg> Read() {
-      Dictionary<string, Dictionary<string, List<temp>>> x = new Dictionary<string, Dictionary<string, List<temp>>>();
-      Dictionary<string, List<temp>> y;
-      List<temp> z;
-
-      List<Hexaleg.HexaLeg> legs = new List<Hexaleg.HexaLeg>();
+    public List<HexaLeg> Read() {
+      List<HexaLeg> legs = new List<HexaLeg>();
+      Dictionary<string, configFile> x = new Dictionary<string, configFile>();
+      configFile cF = new configFile();
 
       string config = File.ReadAllText(this.filePath);
 
       try {
-        x = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, List<temp>>>>(config);
+        x = JsonConvert.DeserializeObject<Dictionary<string, configFile>>(config);
       } catch(Exception ex) {
         throw new ConfigError("[Read]" + ex.Message);
       }
 
       try {
-        foreach(string s1 in x.Keys) {
-          y = x[s1];
-          foreach(string s2 in y.Keys) {
-            z = y[s2];
-            foreach(temp t in z) {
-              Hexaleg.HexaLeg hl = new Hexaleg.HexaLeg(t.Lambda, new Vector3D(t.Offset), new Vector3D(t.Hip), new Vector3D(t.Thigh), new Vector3D(t.Shank));
-              legs.Add(hl);
-            }
-          }
+        cF = x["Hexapod"];
+        HexaLeg hl;
+
+        foreach(tempLeg tL in cF.Legs) {
+          hl = new HexaLeg(
+            tL.Lambda,
+            new Vector3D(tL.Offset),
+            new Vector3D(tL.Hip),
+            new Vector3D(tL.Thigh),
+            new Vector3D(tL.Shank),
+            tL.Support,
+            tL.Switch
+          );
+          legs.Add(hl);
         }
+
       } catch(Exception ex) {
         throw new ConfigError("[Mapping]" + ex.Message);
       }
@@ -65,23 +75,23 @@ namespace Diplomarbeit.Configuration {
     }
 
     /*public void Write(List<Hexaleg.HexaLeg> Legs) {
-      List<temp> tempList = new List<temp>();
-      temp tempLeg = new temp();
+      List<tempLeg> tempList = new List<tempLeg>();
+      tempLeg tL = new tempLeg();
       
 
       foreach(Hexaleg.HexaLeg l in Legs) {
-        tempLeg.Lambda = l.Lambda;
-        tempLeg.Offset = new SimpleVector(l.Offset);
-        tempLeg.Hip = new SimpleVector(l.Hip);
-        tempLeg.Thigh = new SimpleVector(l.Thigh);
-        tempLeg.Shank = new SimpleVector(l.Shank);
-        tempList.Add(tempLeg);
+        tL.Lambda = l.Lambda;
+        tL.Offset = new SimpleVector(l.Offset);
+        tL.Hip = new SimpleVector(l.Hip);
+        tL.Thigh = new SimpleVector(l.Thigh);
+        tL.Shank = new SimpleVector(l.Shank);
+        tempList.Add(tL);
       }
 
-      Dictionary<string, List<temp>> DictLegs = new Dictionary<string, List<temp>>();
+      Dictionary<string, List<tempLeg>> DictLegs = new Dictionary<string, List<tempLeg>>();
       DictLegs.Add("Legs", tempList);
 
-      Dictionary<string, Dictionary<string, List<temp>>> DictHex = new Dictionary<string, Dictionary<string, List<temp>>>();
+      Dictionary<string, Dictionary<string, List<tempLeg>>> DictHex = new Dictionary<string, Dictionary<string, List<tempLeg>>>();
       DictHex.Add("Hexapod", DictLegs);
       try {
         string confString = JsonConvert.SerializeObject(DictHex, Formatting.Indented);

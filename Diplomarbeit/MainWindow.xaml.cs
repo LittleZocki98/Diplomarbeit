@@ -78,7 +78,7 @@ namespace Diplomarbeit {
     private int loadConfig() {
       this.eLog.WriteLog("[Config] Loading");
       try {
-        this.conf = new Config(@"Config.cfg");
+        this.conf = new Config(@"Resources\Config.cfg");
 
         List<Hexaleg.HexaLeg> confLegs = new List<HexaLeg>();
 
@@ -96,14 +96,14 @@ namespace Diplomarbeit {
       return 0;
     }
     private void moving(object sender, EventArgs e) {
-      Vector3D dir = new Vector3D();
+      Vector3D dir = new Vector3D(0.0, 0.0, 0.0);
       
       if (Keyboard.IsKeyDown(kMovF)) { dir.Y += movingDistance; }
       if (Keyboard.IsKeyDown(kMovB)) { dir.Y -= movingDistance; }
       if (Keyboard.IsKeyDown(kMovL)) { dir.X -= movingDistance; }
       if (Keyboard.IsKeyDown(kMovR)) { dir.X += movingDistance; }
-      if (Keyboard.IsKeyDown(kMovU)) { dir.Z += movingDistance / 2.0; }
-      if (Keyboard.IsKeyDown(kMovD)) { dir.Z -= movingDistance / 2.0; }
+      //if (Keyboard.IsKeyDown(kMovU)) { dir.Z += movingDistance / 2.0; }
+      //if (Keyboard.IsKeyDown(kMovD)) { dir.Z -= movingDistance / 2.0; }
 
       this.p.X += dir.X;
       this.p.Y += dir.Y;

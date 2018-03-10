@@ -3,6 +3,14 @@ using Diplomarbeit.Hexeptions;
 using Diplomarbeit.Vector;
 
 namespace Diplomarbeit.Hexaleg {
+  public class Boundary {
+    public double Alpha { get; set; }
+    public double DistanceXY { get; set; }
+
+    public override string ToString() {
+      return "[Alpha: " + this.Alpha + ", DistanceXY: " + this.DistanceXY + "]";
+    }
+  }
   public class HexaLeg {
     /// <summary>
     ///   Offset -> Vector by which the whole leg is offset in reference to the main body
@@ -18,6 +26,9 @@ namespace Diplomarbeit.Hexaleg {
     ///   Point on which the leg is pointing referenced to the main body
     /// </summary>
     private Vector3D endPoint;
+
+    private Boundary support;
+    private Boundary switchLeg;
 
     /// <summary>
     ///   Alpha -> turning angle on the vertical axis
@@ -36,7 +47,7 @@ namespace Diplomarbeit.Hexaleg {
       get { return this.gamma * 180.0 / Math.PI; }
     }
     public double Lambda {
-      get { return this.lambda; }
+      get { return this.lambda * 180.0 / Math.PI; }
     }
     public Vector3D Offset {
       get { return this.offset; }
@@ -49,6 +60,12 @@ namespace Diplomarbeit.Hexaleg {
     }
     public Vector3D Shank {
       get { return this.shank; }
+    }
+    public Boundary Support {
+      get { return this.support; }
+    }
+    public Boundary SwitchLeg {
+      get { return this.switchLeg; }
     }
 
     public Vector3D Point {
@@ -63,7 +80,7 @@ namespace Diplomarbeit.Hexaleg {
     /// <param name="Hip">Vector which describes the leg's hip</param>
     /// <param name="Thigh">Vector which describes the leg's thigh</param>
     /// <param name="Shank">Vector which describes the leg's shank</param>
-    public HexaLeg(double Lambda, Vector3D Offset, Vector3D Hip, Vector3D Thigh, Vector3D Shank) {
+    public HexaLeg(double Lambda, Vector3D Offset, Vector3D Hip, Vector3D Thigh, Vector3D Shank, Boundary Support, Boundary SwitchLeg) {
       this.lambda = Lambda * Math.PI / 180.0; // Convert to radians
       this.offset = Offset;
       this.hip = Hip;
@@ -76,6 +93,9 @@ namespace Diplomarbeit.Hexaleg {
       temp.Y = tempX * Math.Sin(this.lambda) + temp.Y * Math.Cos(this.lambda);
 
       this.endPoint = new Vector3D(temp + this.offset);
+
+      this.support = Support;
+      this.switchLeg = SwitchLeg;
 
       CalculateAngles(this.endPoint);
     }
@@ -132,6 +152,26 @@ namespace Diplomarbeit.Hexaleg {
       this.alpha = Alpha;
       this.beta = Beta;
       this.gamma = Gamma;
+    }
+
+    public bool NeedSupport() {
+      if(Math.Abs(this.alpha) > this.support.Alpha / 180.0 * Math.PI) // |Alpha| > 30°?
+        return true;
+
+      if(this.endPoint.SizeXY > this.support.DistanceXY)
+        return true;
+
+      return false;
+    }
+
+    public bool NonSupportable() {
+      if(Math.Abs(this.alpha) > this.switchLeg.Alpha / 180.0 * Math.PI) // |Alpha| > 45°?
+        return true;
+
+      if(this.endPoint.SizeXY > this.switchLeg.DistanceXY)
+        return true;
+
+      return false;
     }
   }
 }

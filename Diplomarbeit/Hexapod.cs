@@ -16,6 +16,8 @@ namespace Diplomarbeit.Hexapod {
     private List<Vector3D> zeroPoints;
     private Connection connection;
 
+    private int legUp; // 1 = odd, 0 = even
+
     public List<HexaLeg> Legs { get { return this.legs; } }
 
     public Hexapod(Log log) {
@@ -37,18 +39,37 @@ namespace Diplomarbeit.Hexapod {
     public void AddLeg(HexaLeg Leg) {
       this.legs.Add(Leg);
       this.zeroPoints.Add(Leg.Point);
-
-      this.log.WriteLog("[INIT] Added new leg with endpoint at " + Leg.Point.ToString() + " and Lambda = " + Leg.Lambda.ToString() + "°");
+      this.log.WriteLog(
+        "[INIT] Added new leg; Endpoint: " + Leg.Point.ToString() + "; " +
+        "Lambda: " + Leg.Lambda.ToString() + "°; " +
+        "Support: " + Leg.Support.ToString() + "; " +
+        "Switch: " + Leg.SwitchLeg.ToString()
+      );
     }
 
     public void INIT_Legs() {
       for (int i = 0; i < this.legs.Count; i++) {
         this.legs[i].CalculateAngles(this.zeroPoints[i]);
       }
+
+      // raise legs 1, 3 and 5 10mm
+      for (int i = 0; i < 3; i++) {
+        this.legs[2 * i + 1].CalculateAngles(this.zeroPoints[2 * i + 1] + new Vector3D(0.0, 0.0, 10.0));
+      }
+      this.legUp = 1;
     }
 
     public void SwitchLegs() {
-      // TODO!!!
+      switch(legUp) {
+        case 0:
+
+          break;
+        case 1:
+
+          break;
+        default:
+          break;
+      }
     }
 
     /// <summary>
@@ -62,24 +83,27 @@ namespace Diplomarbeit.Hexapod {
         List<double> values = new List<double>();
 
         foreach(HexaLeg leg in this.legs) {
-          // Maybe unneccessary, but who cares?
+          // May be unneccessary, but who cares?
           alpha = double.NaN;
           beta = double.NaN;
           gamma = double.NaN;
+          Vector3D nPoint = new Vector3D();
 
           try {
-            Vector3D nPoint = leg.Point - direction;
+            nPoint = leg.Point - direction;
             leg.CalculateAngles(nPoint);
             alpha = leg.Alpha;
             beta = leg.Beta;
             gamma = leg.Gamma;
-          } catch(SwitchLegs ex) {
-            SwitchLegs();
           }
-          catch(OutOfBoundry ex) { } // Should not occur, cuz' switch-legs fires first! (in case of proper usage)
-          catch(Hexeption ex) { }
+          catch(OutOfBoundry ex) {
+            // Should not occur, cuz' switch-legs fires first! (in case of proper usage)
+            this.log.WriteLog("A fatal error has occured\n\tPoint " + nPoint.ToString() + "is out of reach!");
+            throw new Exception("Fatal Error", ex);
+          } 
           catch(Exception ex) { throw; } // And Cry y.y
 
+          #region displayValues
           values.Clear();
 
           values.Add(leg.Point.X);
@@ -91,17 +115,32 @@ namespace Diplomarbeit.Hexapod {
           values.Add(gamma);
 
           data.Add(values);
+          #endregion
         }
         displ.PrintData(data);
       } catch(Hexeption ex) {
         // Just please don't...
-      } catch(Exception ex) {
-        // Cry y.y
-        System.Windows.MessageBox.Show("Exception while calculating angles!" + Environment.NewLine + ex.Message);
-        throw;
+      } catch(Exception ex) { throw; } // Cry y.y
+
+      bool switchL = false;
+      bool support = false;
+
+      for(int i = legUp; i < this.legs.Count; i += 2) {
+        if (this.legs[i].NonSupportable()) {
+          switchL = true;
+          break;
+        }
+      }
+      if(!switchL) {
+        for(int i = legUp; i < this.legs.Count; i += 2) {
+          if(this.legs[i].NeedSupport()) {
+            support = true;
+            break;
+          }
+        }
       }
 
-      //SendData();
+      SendData();
     }
 
     /// <summary>
