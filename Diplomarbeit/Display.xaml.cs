@@ -69,7 +69,7 @@ namespace Diplomarbeit {
 
       for (int i = 0; i < data.Count; i++) {
         for (int j = 0; j < data[i].Count; j++) {
-          this.boxes[i][j].Text = String.Format("{0:+000.00;-000.00}", data[i][j]);
+          this.boxes[i][j].Text = String.Format("{0:+000.000;-000.000}", data[i][j]);
         }
       }
     }

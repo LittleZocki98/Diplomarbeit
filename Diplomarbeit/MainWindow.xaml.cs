@@ -80,7 +80,7 @@ namespace Diplomarbeit {
       try {
         this.conf = new Config(@"Resources\Config.cfg");
 
-        List<Hexaleg.HexaLeg> confLegs = new List<HexaLeg>();
+        List<HexaLeg> confLegs = new List<HexaLeg>();
 
         confLegs = conf.Read();
 

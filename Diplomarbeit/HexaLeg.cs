@@ -112,18 +112,21 @@ namespace Diplomarbeit.Hexaleg {
     public void CalculateAngles(Vector3D Point) {
       this.endPoint = Point - this.offset;
 
-      if (
+      /*if (
         this.endPoint.Size > this.thigh.Size + this.shank.Size ||
         this.endPoint.Size < Math.Abs(this.shank.Size - this.thigh.Size)
       ) {
         throw new OutOfBoundry("Out of Boundry");
-      }
+      }*/
 
       // Azimuth
       double d = this.endPoint.SizeXY;
       double e = this.hip.Y + this.thigh.Y + this.shank.Y;
       double zet = Math.Acos(e / d);
       double xi = Math.Atan2(this.endPoint.X, this.endPoint.Y);
+
+      if(this.lambda > 4.712) // lambda > 270°?
+        xi -= 2 * Math.PI;
 
       this.alpha = zet - xi - this.lambda;
 
@@ -163,7 +166,7 @@ namespace Diplomarbeit.Hexaleg {
       if(Math.Abs(this.alpha) > this.support.Alpha / 180.0 * Math.PI) // |Alpha| > 30°?
         return true;
 
-      if(this.endPoint.SizeXY > this.support.DistanceXY)
+      if(this.endPoint.SizeXY - this.zeroPoint.SizeXY > this.support.DistanceXY)
         return true;
 
       return false;
@@ -173,7 +176,7 @@ namespace Diplomarbeit.Hexaleg {
       if(Math.Abs(this.alpha) > this.switchLeg.Alpha / 180.0 * Math.PI) // |Alpha| > 45°?
         return true;
 
-      if(this.endPoint.SizeXY > this.switchLeg.DistanceXY)
+      if(this.endPoint.SizeXY - this.zeroPoint.SizeXY > this.switchLeg.DistanceXY)
         return true;
 
       return false;
