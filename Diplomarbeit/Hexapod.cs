@@ -13,10 +13,10 @@ namespace Diplomarbeit.Hexapod {
     private Display displ = new Display();
 
     private List<HexaLeg> legs;
-    private List<Vector3D> zeroPoints;
     private Connection connection;
 
     private int legUp; // 1 = odd, 0 = even
+    private bool supporting;
 
     public List<HexaLeg> Legs { get { return this.legs; } }
 
@@ -27,9 +27,8 @@ namespace Diplomarbeit.Hexapod {
       this.displ.Show();
 
       this.legs = new List<HexaLeg>();
-      this.zeroPoints = new List<Vector3D>();
-
       this.connection = new Connection();
+      this.supporting = false;
     }
 
     /// <summary>
@@ -38,7 +37,6 @@ namespace Diplomarbeit.Hexapod {
     /// <param name="Leg"></param>
     public void AddLeg(HexaLeg Leg) {
       this.legs.Add(Leg);
-      this.zeroPoints.Add(Leg.Point);
       this.log.WriteLog(
         "[INIT] Added new leg; Endpoint: " + Leg.Point.ToString() + "; " +
         "Lambda: " + Leg.Lambda.ToString() + "°; " +
@@ -48,28 +46,25 @@ namespace Diplomarbeit.Hexapod {
     }
 
     public void INIT_Legs() {
-      for (int i = 0; i < this.legs.Count; i++) {
-        this.legs[i].CalculateAngles(this.zeroPoints[i]);
+
+      // Init legs
+      foreach(HexaLeg leg in this.legs) {
+        leg.CalculateAngles(leg.ZeroPoint);
       }
 
       // raise legs 1, 3 and 5 10mm
-      for (int i = 0; i < 3; i++) {
-        this.legs[2 * i + 1].CalculateAngles(this.zeroPoints[2 * i + 1] + new Vector3D(0.0, 0.0, 10.0));
+      for (int i = 1; i < 6; i+=2) {
+        this.legs[i].CalculateAngles(this.legs[i].ZeroPoint + new Vector3D(0.0, 0.0, 10.0));
       }
+
+      // Odd legs are up
       this.legUp = 1;
     }
 
+    // TODO!!
     public void SwitchLegs() {
-      switch(legUp) {
-        case 0:
 
-          break;
-        case 1:
-
-          break;
-        default:
-          break;
-      }
+      legUp = 1 - legUp; // toggle legUp between 0 and 1
     }
 
     /// <summary>
@@ -122,22 +117,14 @@ namespace Diplomarbeit.Hexapod {
         // Just please don't...
       } catch(Exception ex) { throw; } // Cry y.y
 
-      bool switchL = false;
-      bool support = false;
+      bool switchL = legs[legUp].Supportable() || legs[legUp + 2].Supportable() || legs[legUp + 4].Supportable();
+      bool support = legs[legUp].NeedSupport() || legs[legUp + 2].NeedSupport() || legs[legUp + 4].NeedSupport();
 
-      for(int i = legUp; i < this.legs.Count; i += 2) {
-        if (this.legs[i].NonSupportable()) {
-          switchL = true;
-          break;
-        }
+      if(switchL) {
+        SwitchLegs();
       }
-      if(!switchL) {
-        for(int i = legUp; i < this.legs.Count; i += 2) {
-          if(this.legs[i].NeedSupport()) {
-            support = true;
-            break;
-          }
-        }
+      if (support != this.supporting) {
+        this.supporting = support;
       }
 
       SendData();
@@ -177,7 +164,7 @@ namespace Diplomarbeit.Hexapod {
       }
 
       try {
-        this.connection.Send(angles, 1, 2);
+        this.connection.Send(angles, 0, 18);
       } catch(ConnectionError ex) {
 
       } catch(Exception ex) { throw; }

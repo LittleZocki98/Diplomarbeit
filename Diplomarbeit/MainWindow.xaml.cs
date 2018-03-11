@@ -30,7 +30,7 @@ namespace Diplomarbeit {
     private Hexapod.Hexapod hexapod;
 
     private System.Windows.Threading.DispatcherTimer timer;
-    private Vector3D p = new Vector3D(0, 0, 0);
+    private Vector3D p = new Vector3D(0.0, 0.0, 0.0);
 
     private double movingDistance = 1;
     private Key kMovF, kMovB, kMovL, kMovR, kMovU, kMovD, kRotL, kRotR;
@@ -87,6 +87,7 @@ namespace Diplomarbeit {
         foreach(HexaLeg leg in confLegs) {
           this.hexapod.AddLeg(leg);
         }
+        this.hexapod.INIT_Legs();
       } catch(ConfigError ex) {
         this.eLog.WriteLog("[Config] Failed!");
         this.eLog.WriteLog("[Config]" + ex.Message);

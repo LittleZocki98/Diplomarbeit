@@ -26,6 +26,7 @@ namespace Diplomarbeit.Hexaleg {
     ///   Point on which the leg is pointing referenced to the main body
     /// </summary>
     private Vector3D endPoint;
+    private Vector3D zeroPoint;
 
     private Boundary support;
     private Boundary switchLeg;
@@ -67,6 +68,9 @@ namespace Diplomarbeit.Hexaleg {
     public Boundary SwitchLeg {
       get { return this.switchLeg; }
     }
+    public Vector3D ZeroPoint {
+      get { return this.zeroPoint; }
+    }
 
     public Vector3D Point {
       get { return this.endPoint; }
@@ -93,6 +97,7 @@ namespace Diplomarbeit.Hexaleg {
       temp.Y = tempX * Math.Sin(this.lambda) + temp.Y * Math.Cos(this.lambda);
 
       this.endPoint = new Vector3D(temp + this.offset);
+      this.zeroPoint = this.endPoint;
 
       this.support = Support;
       this.switchLeg = SwitchLeg;
@@ -164,7 +169,7 @@ namespace Diplomarbeit.Hexaleg {
       return false;
     }
 
-    public bool NonSupportable() {
+    public bool Supportable() {
       if(Math.Abs(this.alpha) > this.switchLeg.Alpha / 180.0 * Math.PI) // |Alpha| > 45°?
         return true;
 
