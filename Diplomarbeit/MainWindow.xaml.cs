@@ -35,10 +35,18 @@ namespace Diplomarbeit {
     private double movingDistance = 1;
     private Key kMovF, kMovB, kMovL, kMovR, kMovU, kMovD, kRotL, kRotR;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public MainWindow() {
       InitializeComponent();
     }
 
+    /// <summary>
+    /// Loaded-Event
+    /// Initialize all instances and variables
+    /// Load configurationfile
+    /// </summary>
     private void Window_Loaded(object sender, RoutedEventArgs e) {
       this.eLog = new Log();
       this.displ = new Display();
@@ -62,7 +70,7 @@ namespace Diplomarbeit {
       this.btnDisconnect.IsEnabled = false;
       
       if (loadConfig() != 0) {
-        MessageBox.Show("Proper initialization failed.", "Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show("Proper initialization failed.\nConfigurationfile corrupted!", "Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
         this.Close();
       }
 
@@ -75,6 +83,10 @@ namespace Diplomarbeit {
       Application.Current.Shutdown();
     }
 
+    /// <summary>
+    /// Load configurationfile
+    /// </summary>
+    /// <returns>load-status (0 = no error)</returns>
     private int loadConfig() {
       this.eLog.WriteLog("[Config] Loading");
       try {
@@ -96,6 +108,10 @@ namespace Diplomarbeit {
       this.eLog.WriteLog("[Config] Loaded");
       return 0;
     }
+
+    /// <summary>
+    /// moving-method of timer
+    /// </summary>
     private void moving(object sender, EventArgs e) {
       Vector3D dir = new Vector3D(0.0, 0.0, 0.0);
       
@@ -118,7 +134,9 @@ namespace Diplomarbeit {
     }
 
     #region Buttons'n'stuff
-    // Search for COM ports
+    /// <summary>
+    /// Search for COM-Ports
+    /// </summary>
     private void btnPorts_Click(object sender, RoutedEventArgs e) {
       // clear list of potential outdated data
       this.comboPorts.Items.Clear();
@@ -136,7 +154,9 @@ namespace Diplomarbeit {
       this.eLog.WriteLog("[Ports] Refreshed port list!");
     }
 
-    // Try to connect with the device when this button was pressed
+    /// <summary>
+    /// Try to connect with the device
+    /// </summary>
     private void btnConnect_Click(object sender, RoutedEventArgs e) {
       try {
         if(this.comboPorts.SelectedIndex != -1) {
@@ -162,7 +182,9 @@ namespace Diplomarbeit {
 
     }
 
-    // Try to disconnect the device from the application
+    /// <summary>
+    /// Try to disconnect the device from the application
+    /// </summary>
     private void btnDisconnect_Click(object sender, RoutedEventArgs e) {
       try {
         // terminate the connection
@@ -184,6 +206,9 @@ namespace Diplomarbeit {
       }
     }
 
+    /// <summary>
+    /// Check which item was selected in the combobox
+    /// </summary>
     private void comboPorts_SelectionChanged(object sender, SelectionChangedEventArgs e) {
       if(this.comboPorts.SelectedIndex != -1) {
         this.btnConnect.IsEnabled = true;

@@ -73,32 +73,5 @@ namespace Diplomarbeit.Configuration {
 
       return legs;
     }
-
-    /*public void Write(List<Hexaleg.HexaLeg> Legs) {
-      List<tempLeg> tempList = new List<tempLeg>();
-      tempLeg tL = new tempLeg();
-      
-
-      foreach(Hexaleg.HexaLeg l in Legs) {
-        tL.Lambda = l.Lambda;
-        tL.Offset = new SimpleVector(l.Offset);
-        tL.Hip = new SimpleVector(l.Hip);
-        tL.Thigh = new SimpleVector(l.Thigh);
-        tL.Shank = new SimpleVector(l.Shank);
-        tempList.Add(tL);
-      }
-
-      Dictionary<string, List<tempLeg>> DictLegs = new Dictionary<string, List<tempLeg>>();
-      DictLegs.Add("Legs", tempList);
-
-      Dictionary<string, Dictionary<string, List<tempLeg>>> DictHex = new Dictionary<string, Dictionary<string, List<tempLeg>>>();
-      DictHex.Add("Hexapod", DictLegs);
-      try {
-        string confString = JsonConvert.SerializeObject(DictHex, Formatting.Indented);
-        File.WriteAllText(this.filePath, confString);
-      } catch(Exception ex) {
-        throw new ConfigError("[Writing]" + ex.Message);
-      }
-    }*/
   }
 }

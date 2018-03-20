@@ -34,7 +34,7 @@ namespace Diplomarbeit {
       this.boxes = new List<List<TextBox>>();
       
       for (int i = 0; i < 6; i++) {
-        #region Add Label
+
         Label lbl = new Label();
         lbl.Name = "lblLeg" + i.ToString();
         lbl.Content = "Leg " + (i + 1).ToString();
@@ -45,7 +45,6 @@ namespace Diplomarbeit {
         Grid.SetRow(lbl, i + 1);
         Grid.SetColumn(lbl, 0);
         this.gr.Children.Add(lbl);
-        #endregion
 
         this.boxes.Add(new List<TextBox>());
         for (int j = 0; j < 6; j++) {

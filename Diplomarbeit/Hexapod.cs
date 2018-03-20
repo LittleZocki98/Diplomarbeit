@@ -20,6 +20,10 @@ namespace Diplomarbeit.Hexapod {
 
     public List<HexaLeg> Legs { get { return this.legs; } }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="log">Log window</param>
     public Hexapod(Log log) {
       this.log = log;
 
@@ -45,6 +49,9 @@ namespace Diplomarbeit.Hexapod {
       );
     }
 
+    /// <summary>
+    /// Initialize Legs
+    /// </summary>
     public void INIT_Legs() {
 
       // Init legs
@@ -61,14 +68,13 @@ namespace Diplomarbeit.Hexapod {
       this.legUp = 1;
     }
 
-    // TODO!!
     public void SwitchLegs() {
       legUp = 1 - legUp; // toggle legUp between 0 and 1
-      log.WriteLog("Switched Legs!");
+      //log.WriteLog("Switched Legs!");
     }
 
     /// <summary>
-    /// 
+    /// Move the hexapod (and it's legs accordingly)
     /// </summary>
     /// <param name="direction">Movement-Vector</param>
     public void Move(Vector3D direction) {
@@ -104,7 +110,7 @@ namespace Diplomarbeit.Hexapod {
             }
           }
           this.supporting = support;
-          log.WriteLog("Supporting: " + this.supporting.ToString());
+          //log.WriteLog("Supporting: " + this.supporting.ToString());
         }
 
         // if we need support, we move the "raised" legs according to direction
@@ -119,8 +125,9 @@ namespace Diplomarbeit.Hexapod {
           }
         }
 
-        if(switchL)
+        if(switchL) {
           SwitchLegs();
+        }
 
         PrintData();
 
@@ -133,45 +140,50 @@ namespace Diplomarbeit.Hexapod {
     }
 
     /// <summary>
-    /// 
+    /// Connect to given port
     /// </summary>
-    /// <param name="port"></param>
+    /// <param name="port">Port to which the connection should be established</param>
     public void Connect(string port) {
       try {
-        this.connection.InitConnection(port, 9600, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
+        this.connection.InitConnection(port, 19200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
       } catch(ConnectionError ex) { throw; }
     }
 
     /// <summary>
-    /// 
+    /// Disconnect connection
     /// </summary>
     public void Disconnect() {
       this.connection.CloseConnection();
     }
 
     /// <summary>
-    /// 
+    /// Send data to hexapod
     /// </summary>
     public void SendData() {
-      List<byte> temp = new List<byte>();
-      byte[] angles = new byte[18];
-      foreach(HexaLeg l in this.legs) {
-        temp.Add((Byte)(l.Alpha + 90.0));
-        temp.Add((Byte)(l.Beta + 90.0));
-        temp.Add((Byte)(l.Gamma + 90.0));
-      }
+      List<byte> angles = new List<byte>();
 
-      for (int i = 0; i < temp.Count; ++i) {
-        angles[i] = temp[i];
+      /*
+      add angles from each leg to list (And add 90° to allow negative angles to be sent properly)
+      0° in List = -90° Leg
+      180° List = 90° Leg
+      Servomotor is only capable to interpret Angles between 0° and 180°
+      */
+      foreach(HexaLeg l in this.legs) {
+        angles.Add((Byte)(l.Alpha + 90.0));
+        angles.Add((Byte)(l.Beta + 90.0));
+        angles.Add((Byte)(l.Gamma + 90.0));
       }
 
       try {
-        this.connection.Send(angles, 0, 18); // send all 18 angles (6 feet * 3 angles/foot)
+        this.connection.Send(angles.ToArray(), 0, 3); // send all 18 angles (6 feet * 3 angles/foot)
       } catch(ConnectionError ex) {
         this.log.WriteLog("[Connection] Coult not send angles:\n" + ex.Message);
       } catch(Exception ex) { throw; }
     }
 
+    /// <summary>
+    /// Show data on seperate data-window
+    /// </summary>
     public void PrintData() {
       List<List<double>> data = new List<List<double>>();
       List<double> values;

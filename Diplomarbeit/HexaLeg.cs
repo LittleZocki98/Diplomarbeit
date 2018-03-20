@@ -32,12 +32,13 @@ namespace Diplomarbeit.Hexaleg {
     private Boundary switchLeg;
 
     /// <summary>
-    ///   Alpha -> turning angle on the vertical axis
-    ///   Beta  -> angle of the hip axis
-    ///   Gamma -> angle of the knee axis
+    ///   Alpha -> turning angle on the vertical axis (hip)
+    ///   Beta  -> angle of the hip axis (between hip and thigh)
+    ///   Gamma -> angle of the knee axis (between thigh and shank)
     /// </summary>
     private double alpha, beta, gamma;
 
+    // Public 'getter' of internal private variables
     public double Alpha {
       get { return this.alpha * 180.0 / Math.PI; }
     }
@@ -71,47 +72,51 @@ namespace Diplomarbeit.Hexaleg {
     public Vector3D ZeroPoint {
       get { return this.zeroPoint; }
     }
-
     public Vector3D Point {
       get { return this.endPoint; }
     }
 
     /// <summary>
-    /// 
+    /// Constructor
     /// </summary>
     /// <param name="Lambda">Thigh offset in degrees (messured ccw from pos. X-direction)</param>
     /// <param name="Offset">Vector between the hexapod's center and the connection point of the leg</param>
     /// <param name="Hip">Vector which describes the leg's hip</param>
     /// <param name="Thigh">Vector which describes the leg's thigh</param>
     /// <param name="Shank">Vector which describes the leg's shank</param>
-    public HexaLeg(double Lambda, Vector3D Offset, Vector3D Hip, Vector3D Thigh, Vector3D Shank, Boundary Support, Boundary SwitchLeg) {
+    /// <param name="SupportCrit">Support-Criteria</param>
+    /// <param name="SwitchLegCrit">Switch-Criteria</param>
+    public HexaLeg(double Lambda, Vector3D Offset, Vector3D Hip, Vector3D Thigh, Vector3D Shank, Boundary SupportCrit, Boundary SwitchLegCrit) {
       this.lambda = Lambda * Math.PI / 180.0; // Convert to radians
       this.offset = Offset;
       this.hip = Hip;
       this.thigh = Thigh;
       this.shank = Shank;
 
+      // Rotate leg to respect lambda (Rotate around Z-Axis)
       Vector3D temp = new Vector3D(this.hip + this.thigh + this.shank);
-      double tempX = temp.X;
-      temp.X = tempX * Math.Cos(this.lambda) - temp.Y * Math.Sin(this.lambda);
-      temp.Y = tempX * Math.Sin(this.lambda) + temp.Y * Math.Cos(this.lambda);
+      temp.RotZ(this.lambda);
 
-      this.endPoint = new Vector3D(temp + this.offset);
-      this.zeroPoint = this.endPoint;
+      // set zeropoint
+      this.zeroPoint = new Vector3D(temp + this.offset);
+      this.endPoint = this.zeroPoint;
 
-      this.support = Support;
-      this.switchLeg = SwitchLeg;
+      this.support = SupportCrit;
+      this.switchLeg = SwitchLegCrit;
 
+      // Calculate angles for zero-position. (should give 0° for every angle)
       CalculateAngles(this.endPoint);
     }
 
     /// <summary>
-    ///   Method to calculate the necessary angles according to a given end-point
+    /// Method to calculate the necessary angles according to a given end-point
     /// </summary>
     /// <param name="Point">Point which should be approached by the leg</param>
     public void CalculateAngles(Vector3D Point) {
       this.endPoint = Point - this.offset;
 
+      
+      // Not necessary, since it won't happen, when educated users are using this program
       /*if (
         this.endPoint.Size > this.thigh.Size + this.shank.Size ||
         this.endPoint.Size < Math.Abs(this.shank.Size - this.thigh.Size)
@@ -156,12 +161,22 @@ namespace Diplomarbeit.Hexaleg {
       this.gamma = Math.PI + gam0 - gam - psi;
     }
 
+    /// <summary>
+    /// Set the leg's angles manually
+    /// </summary>
+    /// <param name="Alpha"></param>
+    /// <param name="Beta"></param>
+    /// <param name="Gamma"></param>
     public void SetAngles(byte Alpha, byte Beta, byte Gamma) {
       this.alpha = Alpha;
       this.beta = Beta;
       this.gamma = Gamma;
     }
 
+    /// <summary>
+    /// Were any support-criteria reached?
+    /// </summary>
+    /// <returns></returns>
     public bool NeedSupport() {
       if(Math.Abs(this.alpha) > this.support.Alpha / 180.0 * Math.PI) // |Alpha| > 30°?
         return true;
@@ -172,6 +187,10 @@ namespace Diplomarbeit.Hexaleg {
       return false;
     }
 
+    /// <summary>
+    /// Were any switch-criteria reached?
+    /// </summary>
+    /// <returns></returns>
     public bool Supportable() {
       if(Math.Abs(this.alpha) > this.switchLeg.Alpha / 180.0 * Math.PI) // |Alpha| > 45°?
         return true;

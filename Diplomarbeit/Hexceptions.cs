@@ -1,5 +1,8 @@
 ﻿using System;
 
+/// <summary>
+/// Namespace of various custom exceptions
+/// </summary>
 namespace Diplomarbeit.Hexeptions {
   class Hexeption : Exception {
     public Hexeption() { }

@@ -27,10 +27,18 @@ namespace Diplomarbeit {
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
     #endregion
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public Log() {
       InitializeComponent();
       this.textBlock.Text = string.Empty;
     }
+
+    /// <summary>
+    /// Write something to the log
+    /// </summary>
+    /// <param name="text">Log message</param>
     public void WriteLog(string text) {
       this.textBlock.Text += "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + text + '\n';
       this.scrollViewer.ScrollToBottom();
