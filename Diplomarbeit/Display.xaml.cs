@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Diplomarbeit {
   /// <summary>
-  /// Interaktionslogik für Display.xaml
+  ///   Interaktionslogik für Display.xaml
   /// </summary>
   public partial class Display : Window {
-    #region Remove closing button
+
+    // Remove closing-button on window
     private const int GWL_STYLE = -16;
     private const int WS_SYSMENU = 0x80000;
 
@@ -25,15 +17,41 @@ namespace Diplomarbeit {
     private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-    #endregion
 
     private List<List<TextBox>> boxes;
 
+    /// <summary>
+    ///   Constructor
+    /// </summary>
     public Display() {
       InitializeComponent();
+    }
+
+    /// <summary>
+    ///   Print data
+    /// </summary>
+    /// <param name="data">Data to print</param>
+    public void PrintData(List<List<double>> data) {
+
+      for (int i = 0; i < data.Count; i++) {
+        for (int j = 0; j < data[i].Count; j++) {
+          this.boxes[i][j].Text = String.Format("{0:+000.000;-000.000}", data[i][j]);
+        }
+      }
+    }
+
+    /// <summary>
+    ///   Window loaded-event
+    /// </summary>
+    private void Window_Loaded(object sender, RoutedEventArgs e) {
+      // Remove closing-button on window
+      var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+      SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+
+      // Create boxes
       this.boxes = new List<List<TextBox>>();
-      
-      for (int i = 0; i < 6; i++) {
+
+      for(int i = 0; i < 6; i++) {
 
         Label lbl = new Label();
         lbl.Name = "lblLeg" + i.ToString();
@@ -47,7 +65,7 @@ namespace Diplomarbeit {
         this.gr.Children.Add(lbl);
 
         this.boxes.Add(new List<TextBox>());
-        for (int j = 0; j < 6; j++) {
+        for(int j = 0; j < 6; j++) {
           TextBox tb = new TextBox();
 
           tb.Name = "TextBox" + i.ToString() + j.ToString();
@@ -63,19 +81,6 @@ namespace Diplomarbeit {
           this.boxes[i].Add(tb);
         }
       }
-    }
-    public void PrintData(List<List<double>> data) {
-
-      for (int i = 0; i < data.Count; i++) {
-        for (int j = 0; j < data[i].Count; j++) {
-          this.boxes[i][j].Text = String.Format("{0:+000.000;-000.000}", data[i][j]);
-        }
-      }
-    }
-
-    private void Window_Loaded(object sender, RoutedEventArgs e) {
-      var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-      SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
     }
   }
 }

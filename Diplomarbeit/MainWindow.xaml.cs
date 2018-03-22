@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Threading;
 using Diplomarbeit.Configuration;
 using Diplomarbeit.Hexaleg;
 using Diplomarbeit.Hexeptions;
@@ -20,7 +10,7 @@ using Diplomarbeit.Vector;
 
 namespace Diplomarbeit {
   /// <summary>
-  /// Interaktionslogik für MainWindow.xaml
+  ///   Interaktionslogik für MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window {
 
@@ -36,81 +26,81 @@ namespace Diplomarbeit {
     private Key kMovF, kMovB, kMovL, kMovR, kMovU, kMovD, kRotL, kRotR;
 
     /// <summary>
-    /// Constructor
+    ///   Constructor
     /// </summary>
     public MainWindow() {
       InitializeComponent();
     }
 
     /// <summary>
-    /// Loaded-Event
-    /// Initialize all instances and variables
-    /// Load configurationfile
+    ///   Loaded-Event
+    ///   ♦ Initialize all instances and variables
+    ///   ♦ Load configurationfile
     /// </summary>
     private void Window_Loaded(object sender, RoutedEventArgs e) {
-      this.eLog = new Log();
-      this.displ = new Display();
+      eLog = new Log();
+      displ = new Display();
       
-      this.hexapod = new Hexapod.Hexapod(this.eLog);
+      hexapod = new Hexapod.Hexapod(eLog);
 
-      this.timer = new System.Windows.Threading.DispatcherTimer();
-      this.timer.Interval = new TimeSpan(0, 0, 0, 0, 50); // T = 50ms -> f = 20Hz
-      this.timer.Tick += moving;
+      timer = new System.Windows.Threading.DispatcherTimer();
+      timer.Interval = new TimeSpan(0, 0, 0, 0, 50); // T = 50ms -> f = 20Hz
+      timer.Tick += moving;
 
-      this.kMovF = Key.W;
-      this.kMovB = Key.S;
-      this.kMovL = Key.A;
-      this.kMovR = Key.D;
-      this.kMovU = Key.E;
-      this.kMovD = Key.Q;
-      this.kRotL = Key.Y;
-      this.kRotR = Key.X;
+      kMovF = Key.W;
+      kMovB = Key.S;
+      kMovL = Key.A;
+      kMovR = Key.D;
+      kMovU = Key.E;
+      kMovD = Key.Q;
+      kRotL = Key.Y;
+      kRotR = Key.X;
 
-      this.btnConnect.IsEnabled = false;
-      this.btnDisconnect.IsEnabled = false;
+      btnConnect.IsEnabled = false;
+      btnDisconnect.IsEnabled = false;
       
       if (loadConfig() != 0) {
         MessageBox.Show("Proper initialization failed.\nConfigurationfile corrupted!", "Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        this.Close();
+        Close();
       }
 
-      this.Focus();
+      Focus();
     }
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-      if(this.timer.IsEnabled) { this.timer.Stop(); }
-      this.eLog.Close();
-      this.displ.Close();
+      if(timer.IsEnabled) { timer.Stop(); }
+      eLog.Close();
+      displ.Close();
       Application.Current.Shutdown();
     }
 
     /// <summary>
-    /// Load configurationfile
+    ///   Load configurationfile
     /// </summary>
     /// <returns>load-status (0 = no error)</returns>
     private int loadConfig() {
-      this.eLog.WriteLog("[Config] Loading");
+      eLog.WriteLog("[Config] Loading");
       try {
-        this.conf = new Config(@"Resources\Config.cfg");
+        conf = new Config(@"Resources\Config.cfg");
 
         List<HexaLeg> confLegs = new List<HexaLeg>();
 
         confLegs = conf.Read();
 
         foreach(HexaLeg leg in confLegs) {
-          this.hexapod.AddLeg(leg);
+          hexapod.AddLeg(leg);
         }
-        this.hexapod.INIT_Legs();
+        hexapod.INIT_Legs();
       } catch(ConfigError ex) {
-        this.eLog.WriteLog("[Config] Failed!");
-        this.eLog.WriteLog("[Config]" + ex.Message);
+        eLog.WriteLog("[Config] Failed!");
+        eLog.WriteLog("[Config]" + ex.Message);
         return -1;
       }
-      this.eLog.WriteLog("[Config] Loaded");
+      eLog.WriteLog("[Config] Loaded");
       return 0;
     }
 
     /// <summary>
-    /// moving-method of timer
+    ///   moving-method of timer
     /// </summary>
     private void moving(object sender, EventArgs e) {
       Vector3D dir = new Vector3D(0.0, 0.0, 0.0);
@@ -119,105 +109,116 @@ namespace Diplomarbeit {
       if (Keyboard.IsKeyDown(kMovB)) { dir.Y -= movingDistance; }
       if (Keyboard.IsKeyDown(kMovL)) { dir.X -= movingDistance; }
       if (Keyboard.IsKeyDown(kMovR)) { dir.X += movingDistance; }
+
+      /*
+       * Moving up/down not implemented because it would
+       * make everything much more complicated.
+       */
       //if (Keyboard.IsKeyDown(kMovU)) { dir.Z += movingDistance / 2.0; }
       //if (Keyboard.IsKeyDown(kMovD)) { dir.Z -= movingDistance / 2.0; }
 
-      this.p.X += dir.X;
-      this.p.Y += dir.Y;
-      this.p.Z += dir.Z;
+      p.X += dir.X;
+      p.Y += dir.Y;
+      p.Z += dir.Z;
 
-      this.txtXAbs.Text = String.Format("{0:+000.00;-000.00}", this.p.X);
-      this.txtYAbs.Text = String.Format("{0:+000.00;-000.00}", this.p.Y);
-      this.txtZAbs.Text = String.Format("{0:+000.00;-000.00}", this.p.Z);
+      txtXAbs.Text = String.Format("{0:+000.00;-000.00}", p.X);
+      txtYAbs.Text = String.Format("{0:+000.00;-000.00}", p.Y);
+      txtZAbs.Text = String.Format("{0:+000.00;-000.00}", p.Z);
 
-      this.hexapod.Move(dir);
+      // Move robot
+      hexapod.Move(dir);
     }
 
-    #region Buttons'n'stuff
+    /*
+     *  Following manage the window's Items (Buttons, ComboBoxes, ...)
+     *  (Are they executable?; What do they do?)
+     */
+
     /// <summary>
-    /// Search for COM-Ports
+    ///   Search for COM-Ports
     /// </summary>
     private void btnPorts_Click(object sender, RoutedEventArgs e) {
       // clear list of potential outdated data
-      this.comboPorts.Items.Clear();
-      this.eLog.WriteLog("[Ports] Searching for ports...");
+      comboPorts.Items.Clear();
+      eLog.WriteLog("[Ports] Searching for ports...");
 
       // create List-object and fill it with the found COM ports
       List<string> port = new List<string>();
       port = Connection.GetPorts();
-      this.eLog.WriteLog("[Ports] Found " + port.Count + " ports!");
+      eLog.WriteLog("[Ports] Found " + port.Count + " ports!");
 
       // insert found ports into the list
       foreach(string p in port)
-        this.comboPorts.Items.Add(p);
+        comboPorts.Items.Add(p);
 
-      this.eLog.WriteLog("[Ports] Refreshed port list!");
+      eLog.WriteLog("[Ports] Refreshed port list!");
     }
 
     /// <summary>
-    /// Try to connect with the device
+    ///   Try to connect with the device
     /// </summary>
     private void btnConnect_Click(object sender, RoutedEventArgs e) {
       try {
-        if(this.comboPorts.SelectedIndex != -1) {
+        if(comboPorts.SelectedIndex != -1) {
 
-          this.hexapod.Connect(this.comboPorts.SelectedItem.ToString());
-          this.eLog.WriteLog("[Connection] Connected!");
+          hexapod.Connect(comboPorts.SelectedItem.ToString());
+          eLog.WriteLog("[Connection] Connected!");
 
           // start timer for sending data packages
-          this.timer.Start();
-          this.btnPorts.IsEnabled = false;
-          this.comboPorts.IsEnabled = false;
-          this.btnConnect.IsEnabled = false;
-          this.btnDisconnect.IsEnabled = true;
+          timer.Start();
+          btnPorts.IsEnabled = false;
+          comboPorts.IsEnabled = false;
+          btnConnect.IsEnabled = false;
+          btnDisconnect.IsEnabled = true;
         }
         else {
-          this.eLog.WriteLog("[Connection] Please select a port!");
+          eLog.WriteLog("[Connection] Please select a port!");
         }
-    } catch(ConnectionError ex) {
-        this.eLog.WriteLog("[ConnectionError] " + ex.Message);
-    } catch(Exception ex) {
-        this.eLog.WriteLog("[Connection] " + ex.Message);
+      } catch(ConnectionError ex) {
+        eLog.WriteLog("[ConnectionError] " + ex.Message);
+      } catch(Exception ex) {
+        eLog.WriteLog("[Connection] " + ex.Message);
       }
 
     }
 
     /// <summary>
-    /// Try to disconnect the device from the application
+    ///   Try to disconnect the device from the application
     /// </summary>
     private void btnDisconnect_Click(object sender, RoutedEventArgs e) {
       try {
         // terminate the connection
-        this.hexapod.Disconnect();
-        this.eLog.WriteLog("[Connection] Disconnected!");
+        hexapod.Disconnect();
+        eLog.WriteLog("[Connection] Disconnected!");
 
         // stop timer
-        this.timer.Stop();
+        timer.Stop();
 
         // update buttons
-        this.btnPorts.IsEnabled = true;
-        this.comboPorts.IsEnabled = true;
-        this.btnConnect.IsEnabled = true;
-        this.btnDisconnect.IsEnabled = false;
+        btnPorts.IsEnabled = true;
+        comboPorts.IsEnabled = true;
+        btnConnect.IsEnabled = true;
+        btnDisconnect.IsEnabled = false;
       } catch(ConnectionError ex) {
-        this.eLog.WriteLog("[ConnectionError] " + ex.Message);
+        eLog.WriteLog("[ConnectionError] " + ex.Message);
       } catch(Exception ex) {
-        this.eLog.WriteLog("[Connection] " + ex.Message);
+        eLog.WriteLog("[Connection] " + ex.Message);
       }
     }
 
     /// <summary>
-    /// Check which item was selected in the combobox
+    ///   Check which item was selected in the combobox
     /// </summary>
     private void comboPorts_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-      if(this.comboPorts.SelectedIndex != -1) {
-        this.btnConnect.IsEnabled = true;
+      if(comboPorts.SelectedIndex != -1) {
+        btnConnect.IsEnabled = true;
       }
     }
 
-    #endregion
-
-    #region  CustomMenu Command-Stuffz
+    /*
+     *  Following manage the menu's objects
+     *  (Are they executable?; What do they do?)
+     */
 
     // # Exit
     private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
@@ -251,7 +252,5 @@ namespace Diplomarbeit {
 
       } catch(Exception ex) { }
     }
-
-    #endregion End of custom command stuffz
   }
 }

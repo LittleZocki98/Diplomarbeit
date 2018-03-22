@@ -9,7 +9,7 @@ namespace Diplomarbeit {
     private SerialPort port;
     private bool connected;
 
-    public bool Connected { get { return this.connected; } }
+    public bool Connected { get { return connected; } }
 
     /// <summary>
     ///   Get a list of possible ports
@@ -23,7 +23,7 @@ namespace Diplomarbeit {
     }
 
     /// <summary>
-    /// 
+    ///   Add a device via Windows
     /// </summary>
     public static void AddDevice() {
       try {
@@ -34,7 +34,7 @@ namespace Diplomarbeit {
     }
 
     /// <summary>
-    /// 
+    ///   Remove a device via Windows
     /// </summary>
     public static void RemoveDevice() {
       try {
@@ -45,10 +45,10 @@ namespace Diplomarbeit {
     }
 
     public Connection() {
-      this.port = new SerialPort();
+      port = new SerialPort();
 
-      this.connected = new bool();
-      this.connected = false;
+      connected = new bool();
+      connected = false;
     }
 
     /// <summary>
@@ -60,11 +60,11 @@ namespace Diplomarbeit {
     /// <param name="dataBits">Amount of data bits sent</param>
     /// <param name="stopBits">Stop bit configuration</param>
     public void InitConnection(string portName, int boudRate, Parity parity, int dataBits, StopBits stopBits) {
-      if(!this.connected) {
+      if(!connected) {
         try {
-          this.port = new SerialPort(portName, boudRate, parity, dataBits, stopBits);
-          this.port.Open();
-          this.connected = true;
+          port = new SerialPort(portName, boudRate, parity, dataBits, stopBits); // Init
+          port.Open(); // Open
+          connected = true;
         } catch(Exception ex) {
           throw new ConnectionError("Error while initializing connection", ex);
         }
@@ -75,10 +75,10 @@ namespace Diplomarbeit {
     ///   Close the connection
     /// </summary>
     public void CloseConnection() {
-      if(this.connected) {
+      if(connected) {
         try {
-          this.port.Close();
-          this.connected = false;
+          port.Close(); // Close
+          connected = false;
         } catch(Exception ex) {
           throw;
         }
@@ -90,11 +90,11 @@ namespace Diplomarbeit {
     /// </summary>
     /// <param name="buffer">The byte array that contains the data to write to the port</param>
     /// <param name="offset">The zero-based byte offset in the <paramref name="buffer"/> parameter at which to begin copying bytes to the port</param>
-    /// <param name="count">The number of bytes to write</param>
+    /// <param name="count">The number of bytes to send</param>
     public void Send(byte[] buffer, int offset, int count) {
-      if(this.connected) {
+      if(connected) {
         try {
-          this.port.Write(buffer, offset, count);
+          port.Write(buffer, offset, count);
         } catch(Exception ex) {
           throw new ConnectionError("Error while sending", ex);
         }

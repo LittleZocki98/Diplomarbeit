@@ -1,21 +1,30 @@
 ﻿using System;
 
 namespace Diplomarbeit.Vector {
-  public class VectorException : Exception {
-    public VectorException() { }
-    public VectorException(string message) : base(message) { }
-    public VectorException(string message, Exception inner) : base(message, inner) { }
-  }
 
+  /// <summary>
+  ///   Simplified Vector for configuration
+  /// </summary>
   public class SimpleVector {
+    // Public 'getter' to prevent overwriting
     public double X { get; set; }
     public double Y { get; set; }
     public double Z { get; set; }
+
+    /// <summary>
+    ///   Constructor
+    /// </summary>
     public SimpleVector() { }
+
+    /// <summary>
+    ///   Constructor
+    ///   (Downgrade Vector3D to simplified)
+    /// </summary>
+    /// <param name="v"></param>
     public SimpleVector(Vector3D v) {
-      this.X = v.X;
-      this.Y = v.Y;
-      this.Z = v.Z;
+      X = v.X;
+      Y = v.Y;
+      Z = v.Z;
     }
   }
 
@@ -25,42 +34,42 @@ namespace Diplomarbeit.Vector {
     /// </summary>
     private double x, y, z;
 
+    //Public 'getter' for diverse parameters (to prevent overwriting and external calculations)
     public double X {
-      get { return this.x; }
-      set { this.x = value; }
+      get { return x; }
+      set { x = value; }
     }
     public double Y {
-      get { return this.y; }
-      set { this.y = value; }
+      get { return y; }
+      set { y = value; }
     }
     public double Z {
-      get { return this.z; }
-      set { this.z = value; }
+      get { return z; }
+      set { z = value; }
     }
-
     public double SizeXY {
-      get { return Math.Sqrt(this.x * this.x + this.y * this.y); }
+      get { return Math.Sqrt(x * x + y * y); }
     }
     public double SizeXY_Sq {
-      get { return this.x * this.x + this.y * this.y; }
+      get { return x * x + y * y; }
     }
     public double SizeXZ {
-      get { return Math.Sqrt(this.x * this.x + this.z * this.z); }
+      get { return Math.Sqrt(x * x + z * z); }
     }
     public double SizeXZ_Sq {
-      get { return this.x * this.x + this.z * this.z; }
+      get { return x * x + z * z; }
     }
     public double SizeYZ {
-      get { return Math.Sqrt(this.y * this.y + this.z * this.z); }
+      get { return Math.Sqrt(y * y + z * z); }
     }
     public double SizeYZ_Sq {
-      get { return this.y * this.y + this.z * this.z; }
+      get { return y * y + z * z; }
     }
     public double Size {
-      get { return Math.Sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+      get { return Math.Sqrt(x * x + y * y + z * z); }
     }
     public double Size_Sq {
-      get { return this.x * this.x + this.y * this.y + this.z * this.z; }
+      get { return x * x + y * y + z * z; }
     }
 
     // override some operators
@@ -77,44 +86,81 @@ namespace Diplomarbeit.Vector {
     
     // override the ToString() method
     public override string ToString() {
-      return "[" + this.X + ", " + this.Y + ", " + this.Z + "]";
+      return "[" + X + ", " + Y + ", " + Z + "]";
     }
 
+    /// <summary>
+    ///   Constructor
+    /// </summary>
     public Vector3D() {
-      this.x = 0.0;
-      this.y = 0.0;
-      this.z = 0.0;
-    }
-    public Vector3D(double X, double Y, double Z) {
-      this.x = X;
-      this.y = Y;
-      this.z = Z;
-    }
-    public Vector3D(Vector3D v) {
-      this.x = v.x;
-      this.y = v.y;
-      this.z = v.z;
-    }
-    public Vector3D(SimpleVector v) {
-      this.x = v.X;
-      this.y = v.Y;
-      this.z = v.Z;
+      x = 0.0;
+      y = 0.0;
+      z = 0.0;
     }
 
+    /// <summary>
+    ///   Constructor
+    ///   (And Init with X,Y,Z)
+    /// </summary>
+    /// <param name="X">Length in X</param>
+    /// <param name="Y">Length in Y</param>
+    /// <param name="Z">Length in Z</param>
+    public Vector3D(double X, double Y, double Z) {
+      x = X;
+      y = Y;
+      z = Z;
+    }
+
+    /// <summary>
+    ///   Constructor
+    ///   (Copy Vector)
+    /// </summary>
+    /// <param name="v"></param>
+    public Vector3D(Vector3D v) {
+      x = v.x;
+      y = v.y;
+      z = v.z;
+    }
+
+    /// <summary>
+    ///   Constructor
+    ///   (Upgrade SimpleVector to Vector3D)
+    /// </summary>
+    /// <param name="v"></param>
+    public Vector3D(SimpleVector v) {
+      x = v.X;
+      y = v.Y;
+      z = v.Z;
+    }
+
+    /// <summary>
+    ///   Rotate this vector around the X-axis
+    /// </summary>
+    /// <param name="angle">Rotation angle</param>
     public void RotX(double angle) {
-      double t = this.y;
-      this.y = t * Math.Cos(angle) - this.z * Math.Sin(angle);
-      this.z = this.z * Math.Cos(angle) + t * Math.Sin(angle);
+      double t = y;
+      y = t * Math.Cos(angle) - z * Math.Sin(angle);
+      z = z * Math.Cos(angle) + t * Math.Sin(angle);
     }
+
+    /// <summary>
+    ///   Rotate this vector around the Y-axis
+    /// </summary>
+    /// <param name="angle">Rotation angle</param>
     public void RotY(double angle) {
-      double t = this.x;
-      this.x = t * Math.Cos(angle) + this.z * Math.Sin(angle);
-      this.z = this.z * Math.Cos(angle) - t * Math.Sin(angle);
+      double t = x;
+      x = t * Math.Cos(angle) + z * Math.Sin(angle);
+      z = z * Math.Cos(angle) - t * Math.Sin(angle);
     }
+
+    /// <summary>
+    ///   Rotate this vector around the Z-axis
+    /// </summary>
+    /// <param name="angle">Rotation angle</param>
     public void RotZ(double angle) {
-      double t = this.x;
-      this.x = t * Math.Cos(angle) - this.y * Math.Sin(angle);
-      this.y = this.y * Math.Cos(angle) + t * Math.Sin(angle);
+      double t = x;
+      x = t * Math.Cos(angle) - y * Math.Sin(angle);
+      y = y * Math.Cos(angle) + t * Math.Sin(angle);
     }
   }
 }
