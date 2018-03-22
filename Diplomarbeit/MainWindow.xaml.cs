@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Diplomarbeit.Configuration;
 using Diplomarbeit.Hexaleg;
 using Diplomarbeit.Hexeptions;
@@ -23,7 +24,7 @@ namespace Diplomarbeit {
     private Vector3D p = new Vector3D(0.0, 0.0, 0.0);
 
     private double movingDistance = 1;
-    private Key kMovF, kMovB, kMovL, kMovR, kMovU, kMovD, kRotL, kRotR;
+    private Key kMovF, kMovB, kMovL, kMovR; //kMovU, kMovD, kRotL, kRotR;
 
     /// <summary>
     ///   Constructor
@@ -51,10 +52,11 @@ namespace Diplomarbeit {
       kMovB = Key.S;
       kMovL = Key.A;
       kMovR = Key.D;
-      kMovU = Key.E;
-      kMovD = Key.Q;
-      kRotL = Key.Y;
-      kRotR = Key.X;
+
+      //kMovU = Key.E;
+      //kMovD = Key.Q;
+      //kRotL = Key.Y;
+      //kRotR = Key.X;
 
       btnConnect.IsEnabled = false;
       btnDisconnect.IsEnabled = false;
@@ -65,6 +67,13 @@ namespace Diplomarbeit {
       }
 
       Focus();
+      connectedIndicator.Fill = new SolidColorBrush(Color.FromRgb(0xCC, 0x00, 0x00));
+
+      JoystickHead.SetValue(Canvas.LeftProperty, (JoystickBase.Width - JoystickHead.Width) / 2.0);
+      JoystickHead.SetValue(Canvas.TopProperty, (JoystickBase.Height - JoystickHead.Height) / 2.0);
+      JoystickArm.SetValue(Canvas.LeftProperty, (JoystickBase.Width / 2.0));
+      JoystickArm.SetValue(Canvas.TopProperty, (JoystickBase.Height - JoystickArm.Height) / 2.0);
+      JoystickArm.Width = 0;
     }
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
       if(timer.IsEnabled) { timer.Stop(); }
@@ -117,13 +126,22 @@ namespace Diplomarbeit {
       //if (Keyboard.IsKeyDown(kMovU)) { dir.Z += movingDistance / 2.0; }
       //if (Keyboard.IsKeyDown(kMovD)) { dir.Z -= movingDistance / 2.0; }
 
-      p.X += dir.X;
-      p.Y += dir.Y;
-      p.Z += dir.Z;
+      double length = (JoystickBase.Width - JoystickHead.Width) / 2.0;
+      double dX = 0.0;
+      double dY = 0.0;
+      double alpha = 0.0;
+      if(dir.Size_Sq != 0) {
+        alpha = Math.Atan2(dir.Y, dir.X);
+        dX = Math.Cos(alpha) * (length - 5);
+        dY = Math.Sin(-alpha) * (length - 5);
+        JoystickArm.Width = length;
+      } else {
+        JoystickArm.Width = 0.0;
+      }
 
-      txtXAbs.Text = String.Format("{0:+000.00;-000.00}", p.X);
-      txtYAbs.Text = String.Format("{0:+000.00;-000.00}", p.Y);
-      txtZAbs.Text = String.Format("{0:+000.00;-000.00}", p.Z);
+      JoystickHead.SetValue(Canvas.LeftProperty, length + dX);
+      JoystickHead.SetValue(Canvas.TopProperty, length + dY);
+      JoystickArm.RenderTransform = new RotateTransform(alpha * -180.0 / Math.PI);
 
       // Move robot
       hexapod.Move(dir);
@@ -170,6 +188,7 @@ namespace Diplomarbeit {
           comboPorts.IsEnabled = false;
           btnConnect.IsEnabled = false;
           btnDisconnect.IsEnabled = true;
+          connectedIndicator.Fill = new SolidColorBrush(Color.FromRgb(0x00, 0xCC, 0x00));
         }
         else {
           eLog.WriteLog("[Connection] Please select a port!");
@@ -199,6 +218,7 @@ namespace Diplomarbeit {
         comboPorts.IsEnabled = true;
         btnConnect.IsEnabled = true;
         btnDisconnect.IsEnabled = false;
+        connectedIndicator.Fill = new SolidColorBrush(Color.FromRgb(0xCC, 0x00, 0x00));
       } catch(ConnectionError ex) {
         eLog.WriteLog("[ConnectionError] " + ex.Message);
       } catch(Exception ex) {
