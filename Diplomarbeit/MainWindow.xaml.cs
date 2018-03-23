@@ -67,7 +67,6 @@ namespace Diplomarbeit {
       }
 
       Focus();
-      connectedIndicator.Fill = new SolidColorBrush(Color.FromRgb(0xCC, 0x00, 0x00));
 
       JoystickHead.SetValue(Canvas.LeftProperty, (JoystickBase.Width - JoystickHead.Width) / 2.0);
       JoystickHead.SetValue(Canvas.TopProperty, (JoystickBase.Height - JoystickHead.Height) / 2.0);
@@ -232,6 +231,7 @@ namespace Diplomarbeit {
     private void comboPorts_SelectionChanged(object sender, SelectionChangedEventArgs e) {
       if(comboPorts.SelectedIndex != -1) {
         btnConnect.IsEnabled = true;
+        connectedIndicator.Fill = new SolidColorBrush(Color.FromRgb(0xCC, 0x00, 0x00));
       }
     }
 

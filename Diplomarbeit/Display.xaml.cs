@@ -69,7 +69,7 @@ namespace Diplomarbeit {
           TextBox tb = new TextBox();
 
           tb.Name = "TextBox" + i.ToString() + j.ToString();
-          tb.Text = "TextBox" + i.ToString() + j.ToString();
+          tb.Text = "±0.000";
 
           tb.HorizontalAlignment = HorizontalAlignment.Center;
           tb.VerticalAlignment = VerticalAlignment.Center;

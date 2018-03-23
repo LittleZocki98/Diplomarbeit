@@ -43,7 +43,7 @@
     <Button x:Name="btnPorts" Content="Get Ports" Grid.Column="1" Margin="2" Grid.Row="1" Click="btnPorts_Click"/>
     <Button x:Name="btnConnect" Content="Connect" Grid.Column="2" Margin="2" Grid.Row="1" Click="btnConnect_Click"/>
     <Button x:Name="btnDisconnect" Content="Disconnect" Grid.Column="2" Margin="2" Grid.Row="2" Click="btnDisconnect_Click"/>
-    <Ellipse x:Name="connectedIndicator" Grid.Column="3" Fill="#FF000000" Grid.Row="1" Stroke="Black" Grid.RowSpan="2" Margin="15, 10, 10, 15"/>
+    <Ellipse x:Name="connectedIndicator" Grid.Column="3" Fill="#FF555555" Grid.Row="1" Stroke="Black" Grid.RowSpan="2" Margin="15, 10, 10, 15"/>
     <Canvas x:Name="JoyStick" Grid.Column="1" Margin="10" Grid.Row="4">
       <Ellipse x:Name="JoystickBase" Fill="#FFC9BF9C" Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding ActualWidth, ElementName=JoyStick}" Height="{Binding ActualHeight, ElementName=JoyStick}"/>
       <Rectangle x:Name="JoystickArm" Fill="#FFA6A6A6" Height="15" Stroke="#FF2E2E2E" Width="60" RenderTransformOrigin="0,0.5"/>

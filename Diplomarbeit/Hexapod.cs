@@ -39,7 +39,7 @@ namespace Diplomarbeit.Hexapod {
     public void AddLeg(HexaLeg Leg) {
       legs.Add(Leg);
       log.WriteLog(
-        "[INIT]; Added new leg; Endpoint: " + Leg.Point.ToString() + "; " +
+        "[INIT] Added new leg; Endpoint: " + Leg.Point.ToString() + "; " +
         "Lambda: " + Leg.Lambda.ToString() + "°; " +
         "Support-Criteria: " + Leg.Support.ToString() + "; " +
         "Switch-Criteria: " + Leg.SwitchLeg.ToString()
