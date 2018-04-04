@@ -144,7 +144,7 @@ namespace Diplomarbeit.Hexapod {
     /// <param name="port">Port to which the connection should be established</param>
     public void Connect(string port) {
       try {
-        connection.InitConnection(port, 19200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
+        connection.InitConnection(port, 115200, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
       } catch(ConnectionError ex) { throw; }
     }
 
